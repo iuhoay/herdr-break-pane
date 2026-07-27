@@ -8,6 +8,16 @@ It mirrors tmux-style break-pane behavior:
 - a zoomed multi-pane tab is unzoomed before the pane moves;
 - the moved pane and its running process remain alive and receive focus in the new tab.
 
+## Background
+
+I originally shared this idea in
+[Herdr Discussion #1114](https://github.com/ogulcancelik/herdr/discussions/1114).
+
+This plugin makes the proposed `break_pane` workflow available today using
+Herdr's public plugin APIs. If you find it useful, feel free to try it and join
+the discussion—the feedback and upvotes help show whether it would also be
+valuable as a built-in Herdr action.
+
 ## Requirements
 
 - Herdr 0.7.0 or newer
