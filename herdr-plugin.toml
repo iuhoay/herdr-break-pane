@@ -1,0 +1,13 @@
+id = "iuhoay.break-pane"
+name = "herdr-break-pane"
+version = "0.1.0"
+min_herdr_version = "0.7.0"
+description = "Move the focused pane into a new tab without churning single-pane tabs"
+platforms = ["linux", "macos", "windows"]
+
+[[actions]]
+id = "break"
+title = "Break pane into new tab"
+description = "Move the focused pane into a new tab"
+contexts = ["pane"]
+command = ["node", "break-pane.mjs"]
