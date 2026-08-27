@@ -1,12 +1,14 @@
 # herdr-break-pane
 
-A small Herdr plugin that moves the focused pane into a new tab.
+A small Herdr plugin that moves the focused pane into a new tab, or into another workspace.
 
 It mirrors tmux-style break-pane behavior:
 
 - a pane that is already alone in its tab is left untouched;
 - a zoomed multi-pane tab is unzoomed before the pane moves;
 - the moved pane and its running process remain alive and receive focus in the new tab.
+
+A second action opens a popup to pick another workspace and moves the pane there as a new tab.
 
 ## Background
 
@@ -20,7 +22,7 @@ valuable as a built-in Herdr action.
 
 ## Requirements
 
-- Herdr 0.7.0 or newer
+- Herdr 0.7.4 or newer
 - Node.js 18 or newer
 
 ## Install
@@ -48,6 +50,12 @@ key = "prefix+shift+c"
 type = "plugin_action"
 command = "iuhoay.break-pane.break"
 description = "break pane to new tab"
+
+[[keys.command]]
+key = "prefix+shift+m"
+type = "plugin_action"
+command = "iuhoay.break-pane.move-to-workspace"
+description = "move pane to workspace"
 ```
 
 The binding syntax uses `+` between every part: `prefix+shift+c`, not `prefix-shift+c`. You can replace it with another unused key combination.
@@ -71,6 +79,7 @@ You can test the action without a keybinding:
 
 ```bash
 herdr plugin action invoke iuhoay.break-pane.break
+herdr plugin action invoke iuhoay.break-pane.move-to-workspace
 ```
 
 To remove the shortcut, delete the complete `[[keys.command]]` block and run `herdr server reload-config` again. Uninstalling the plugin does not remove manually added keybindings.
@@ -91,4 +100,4 @@ Run the tests:
 npm test
 ```
 
-The plugin has no npm dependencies. Herdr starts `break-pane.mjs` as a declared plugin action; the script reads the focused pane from the injected plugin context and calls Herdr back through `HERDR_BIN_PATH`.
+The plugin has no npm dependencies. Herdr starts the declared actions and the workspace picker popup; the scripts read the focused pane from the injected plugin context and call Herdr back through `HERDR_BIN_PATH`.

@@ -1,8 +1,8 @@
 id = "iuhoay.break-pane"
 name = "herdr-break-pane"
 version = "0.1.0"
-min_herdr_version = "0.7.0"
-description = "Move the focused pane into a new tab without churning single-pane tabs"
+min_herdr_version = "0.7.4"
+description = "Move the focused pane into a new tab or another workspace"
 platforms = ["linux", "macos", "windows"]
 
 [[actions]]
@@ -11,3 +11,18 @@ title = "Break pane into new tab"
 description = "Move the focused pane into a new tab"
 contexts = ["pane"]
 command = ["node", "break-pane.mjs"]
+
+[[actions]]
+id = "move-to-workspace"
+title = "Move pane to workspace"
+description = "Move the focused pane into a new tab in another workspace"
+contexts = ["pane"]
+command = ["node", "workspace-picker.mjs", "--open"]
+
+[[panes]]
+id = "workspace-picker"
+title = "Move pane to workspace"
+placement = "popup"
+width = "60%"
+height = 16
+command = ["node", "workspace-picker.mjs"]
