@@ -7,8 +7,6 @@ A small Herdr plugin with two pane actions:
 
 Both actions unzoom a zoomed tab before the move. The pane and its running process stay alive and receive focus afterwards.
 
-![Demo](https://github.com/iuhoay/herdr-break-pane/releases/download/demo/demo.mp4)
-
 ## Usage
 
 Break runs immediately. Move to workspace opens a popup (the current workspace is omitted):
