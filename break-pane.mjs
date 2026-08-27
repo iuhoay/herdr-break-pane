@@ -1,7 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 
-function paneIdFromEnvironment(env) {
+export function paneIdFromEnvironment(env) {
   if (env.HERDR_PANE_ID) return env.HERDR_PANE_ID;
 
   if (env.HERDR_PLUGIN_CONTEXT_JSON) {
