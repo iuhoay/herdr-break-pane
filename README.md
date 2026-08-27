@@ -1,14 +1,25 @@
 # herdr-break-pane
 
-A small Herdr plugin that moves the focused pane into a new tab, or into another workspace.
+A small Herdr plugin with two pane actions:
 
-It mirrors tmux-style break-pane behavior:
+- **Break** moves the focused pane into a new tab in the same workspace (tmux-style break-pane). A pane that is already alone in its tab is left untouched.
+- **Move to workspace** opens a popup to pick another workspace (or create one) and moves the pane there as a new tab. A lone pane is still moved — relocating it is the point.
 
-- a pane that is already alone in its tab is left untouched;
-- a zoomed multi-pane tab is unzoomed before the pane moves;
-- the moved pane and its running process remain alive and receive focus in the new tab.
+Both actions unzoom a zoomed tab before the move. The pane and its running process stay alive and receive focus afterwards.
 
-A second action opens a popup to pick another workspace and moves the pane there as a new tab.
+![Demo](https://github.com/iuhoay/herdr-break-pane/releases/download/demo/demo.mp4)
+
+## Usage
+
+Break runs immediately. Move to workspace opens a popup (the current workspace is omitted):
+
+| Key | Action |
+| --- | --- |
+| `j` / `k` or arrows | move selection |
+| `/` | filter by number, label, or id |
+| `c` | move the pane into a new workspace |
+| Enter | move to the selected workspace |
+| `esc` / `q` | cancel |
 
 ## Background
 
