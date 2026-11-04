@@ -125,12 +125,6 @@ export function openWorkspacePicker({ env = process.env, runHerdr } = {}) {
   return { opened: true, pane_id: paneId };
 }
 
-function workspaceLabel(workspace) {
-  const number = workspace.number != null ? String(workspace.number) : "";
-  const label = workspace.label || workspace.workspace_id;
-  return number ? `${number}  ${label}` : label;
-}
-
 export function filterWorkspaces(workspaces, query) {
   const needle = query.trim().toLowerCase();
   if (!needle) return workspaces;
@@ -155,27 +149,52 @@ function visibleSlice(items, index, size) {
   return { items: items.slice(offset, offset + size), offset };
 }
 
-function filterLine(state) {
-  if (state.filtering) return `/${state.query}`;
-  if (state.query) return `\x1b[2m/${state.query}\x1b[0m`;
-  return "\x1b[2mj/k  /  c  enter  esc/q\x1b[0m";
+const DIM = "\x1b[2m";
+const RESET = "\x1b[0m";
+
+export function renderPickerFrame(state, visible, { columns = 40, rows = 16 } = {}) {
+  const height = Math.max(rows, 4);
+  const width = Math.max(columns, 8);
+  const listSize = Math.max(1, height - 3);
+  const { items, offset } = visibleSlice(visible, state.index, listSize);
+  const numberWidth = visible.reduce(
+    (width, workspace) => Math.max(width, workspace.number == null ? 0 : String(workspace.number).length),
+    0,
+  );
+  const pad = (text) => text.slice(0, width).padEnd(width);
+  const dim = (text) => `${DIM}${text}${RESET}`;
+  const placeholder = !state.query && !state.filtering;
+  const count = String(visible.length);
+  const search = (placeholder ? " / search workspaces" : ` / ${state.query}`).slice(0, width - count.length - 1);
+  const hint = state.filtering
+    ? " type · ↑↓ · enter · esc"
+    : " ↑↓/j/k · / search · c new · enter · esc";
+  const lines = [
+    `${placeholder ? dim(search) : search}${" ".repeat(width - search.length - count.length)}${dim(count)}`,
+    dim("─".repeat(width)),
+  ];
+
+  if (items.length === 0) lines.push(dim(pad(" No matches")));
+  for (let i = 0; i < items.length; i += 1) {
+    const workspace = items[i];
+    const label = workspace.label || workspace.workspace_id;
+    const number = workspace.number == null ? "" : `${String(workspace.number).padStart(numberWidth)}  `;
+    const text = pad(` ${number}${label}`);
+    lines.push(i + offset === state.index ? `\x1b[1;7m${text}${RESET}` : text);
+  }
+  while (lines.length < height - 1) lines.push(pad(""));
+  lines.push(dim(pad(hint)));
+  return lines.join("\n");
 }
 
 function renderPicker(state, visible) {
-  const rows = Math.min(stdout.rows || 16, 16);
-  const size = Math.max(1, rows - 3);
-  const { items, offset } = visibleSlice(visible, state.index, size);
-  const lines = [
-    "Move pane to workspace",
-    filterLine(state),
-    ...items.map((workspace, i) => {
-      const selected = i + offset === state.index;
-      const line = `${selected ? ">" : " "} ${workspaceLabel(workspace)}`;
-      return selected ? `\x1b[7m${line}\x1b[0m` : line;
-    }),
-  ];
-  if (items.length === 0) lines.push("\x1b[2mno matches\x1b[0m");
-  stdout.write(`\x1b[?25l\x1b[2J\x1b[H${lines.join("\n")}`);
+  const columns = stdout.columns || 40;
+  const rows = stdout.rows || 16;
+  const frame = renderPickerFrame(state, visible, { columns, rows });
+  const cursor = state.filtering
+    ? `\x1b[1;${Math.min(columns, ` / ${state.query}`.length + 1)}H\x1b[?25h`
+    : "\x1b[?25l";
+  stdout.write(`\x1b[H${frame.split("\n").join("\x1b[K\n")}\x1b[K\x1b[J${cursor}`);
 }
 
 export function parseKey(buffer) {

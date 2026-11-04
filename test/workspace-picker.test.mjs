@@ -9,6 +9,7 @@ import {
   movePaneToWorkspace,
   openWorkspacePicker,
   parseKey,
+  renderPickerFrame,
 } from "../workspace-picker.mjs";
 
 const paneId = "w1:p2";
@@ -214,6 +215,44 @@ test("filters workspaces by label, id, or number", () => {
     filterWorkspaces(workspaces, "2").map((workspace) => workspace.workspace_id),
     ["w2"],
   );
+});
+
+test("lays the picker out like the Go To list", () => {
+  const frame = renderPickerFrame(
+    { index: 0, query: "", filtering: false },
+    [
+      { workspace_id: "w2", label: "core", number: 2 },
+      { workspace_id: "w10", label: "notes", number: 10 },
+    ],
+    { columns: 40, rows: 8 },
+  );
+  const lines = frame.split("\n");
+
+  assert.equal(lines.length, 8);
+  assert.equal(frame.includes("Move pane to workspace"), false);
+  assert.match(lines[0], /\/ search workspaces/);
+  assert.match(lines[0], /2\x1b\[0m$/);
+  assert.match(lines[1], /─{40}/);
+  assert.match(lines[2], /\x1b\[1;7m {2}2  core/);
+  assert.equal(lines[2].includes(">"), false);
+  assert.equal(lines[2].match(/\x1b\[1;7m(.*)\x1b\[0m/)[1].length, 40);
+  assert.match(lines[3], /10 {2}notes/);
+  assert.equal(lines[3].includes("\x1b[1;7m"), false);
+  assert.match(lines[7], /↑↓\/j\/k · \/ search · c new · enter · esc/);
+});
+
+test("pins the search query and filters the footer while typing", () => {
+  const frame = renderPickerFrame(
+    { index: 0, query: "nope", filtering: true },
+    [],
+    { columns: 48, rows: 5 },
+  );
+  const lines = frame.split("\n");
+
+  assert.match(lines[0], /\/ nope/);
+  assert.equal(lines[0].includes("search workspaces"), false);
+  assert.match(frame, /No matches/);
+  assert.match(lines[4], /type · ↑↓ · enter · esc/);
 });
 
 test("uses vim-style slash filtering", () => {
