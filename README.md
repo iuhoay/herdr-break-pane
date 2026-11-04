@@ -1,15 +1,16 @@
 # herdr-break-pane
 
-A small Herdr plugin with two pane actions:
+A small Herdr plugin with three pane actions:
 
 - **Break** moves the focused pane into a new tab in the same workspace (tmux-style break-pane). A pane that is already alone in its tab is left untouched.
+- **Break to workspace** moves the focused pane directly into a new workspace. A lone pane is still moved — relocating it is the point.
 - **Move to workspace** opens a popup to pick another workspace (or create one) and moves the pane there as a new tab. A lone pane is still moved — relocating it is the point.
 
-Both actions unzoom a zoomed tab before the move. The pane and its running process stay alive and receive focus afterwards.
+All actions unzoom a zoomed tab before the move. The pane and its running process stay alive and receive focus afterwards.
 
 ## Usage
 
-Break runs immediately. Move to workspace opens a popup (the current workspace is omitted):
+Break and Break to workspace run immediately. Move to workspace opens a popup (the current workspace is omitted):
 
 | Key | Action |
 | --- | --- |
@@ -61,6 +62,12 @@ command = "iuhoay.break-pane.break"
 description = "break pane to new tab"
 
 [[keys.command]]
+key = "prefix+shift+b"
+type = "plugin_action"
+command = "iuhoay.break-pane.break-to-workspace"
+description = "break pane to new workspace"
+
+[[keys.command]]
 key = "prefix+shift+m"
 type = "plugin_action"
 command = "iuhoay.break-pane.move-to-workspace"
@@ -88,6 +95,7 @@ You can test the action without a keybinding:
 
 ```bash
 herdr plugin action invoke iuhoay.break-pane.break
+herdr plugin action invoke iuhoay.break-pane.break-to-workspace
 herdr plugin action invoke iuhoay.break-pane.move-to-workspace
 ```
 
