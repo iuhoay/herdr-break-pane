@@ -312,6 +312,11 @@ async function runPicker({ env = process.env, runHerdr } = {}) {
 }
 
 async function main() {
+  if (process.argv.includes("--new-workspace")) {
+    const result = movePaneToNewWorkspace();
+    stdout.write(`${JSON.stringify(result)}\n`);
+    return;
+  }
   if (process.argv.includes("--open")) {
     openWorkspacePicker();
     return;

@@ -13,6 +13,13 @@ contexts = ["pane"]
 command = ["node", "break-pane.mjs"]
 
 [[actions]]
+id = "break-to-workspace"
+title = "Break pane to new workspace"
+description = "Move the focused pane into a new workspace"
+contexts = ["pane"]
+command = ["node", "workspace-picker.mjs", "--new-workspace"]
+
+[[actions]]
 id = "move-to-workspace"
 title = "Move pane to workspace"
 description = "Move the focused pane into a new tab in another workspace"
